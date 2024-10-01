@@ -8,7 +8,30 @@
 import SwiftUI
 
 struct VehicleDetailView: View {
-    let vehicle: Vehicle
+    var vehicle: Vehicle
+    
+    var body: some View {
+        // TabView for sliding between pages
+        TabView {
+            // First View: Vehicle Details
+            VehicleInfoView(vehicle: vehicle)
+                .tabItem {
+                    Text("Details")
+                }
+
+            // Second View: Estimated Carbon Emissions
+            CarbonEmissionsView(vehicle: vehicle)
+                .tabItem {
+                    Text("Emissions")
+                }
+        }
+        .tabViewStyle(PageTabViewStyle()) // Enables horizontal swipe
+        .navigationTitle(vehicle.makeAndModel)
+    }
+}
+
+struct VehicleInfoView: View {
+    var vehicle: Vehicle
     
     var body: some View {
         VStack(spacing: 20) {
@@ -28,6 +51,21 @@ struct VehicleDetailView: View {
             Spacer()
         }
         .navigationTitle("Vehicle Details")
+        .padding()
+    }
+}
+
+struct CarbonEmissionsView: View {
+    var vehicle: Vehicle
+    var viewModel = EmissionCarbonViewModel()
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("kilometrage: \(vehicle.kilometrage) km")
+                .font(.headline)
+            Text("Estimated Carbon Emissions: \(viewModel.calculateCarbonEmissions(for: Double(vehicle.kilometrage)), specifier: "%.2f") units")
+                .font(.subheadline)
+        }
         .padding()
     }
 }
